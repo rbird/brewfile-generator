@@ -1,8 +1,7 @@
 # brewfile-generator
 
-A shell script that snapshots every installed app on macOS and emits a `Brewfile` for one-command restoration on a new Mac.
-
-For a step-by-step guide to restoring apps on a new Mac, see [MIGRATION.md](MIGRATION.md).
+A shell script that snapshots every installed app on macOS and emits a `Brewfile`
+for one-command restoration on a new Mac.
 
 ## What it captures
 
@@ -13,51 +12,137 @@ For a step-by-step guide to restoring apps on a new Mac, see [MIGRATION.md](MIGR
 | Homebrew casks | `cask "..."` | `brew bundle install` |
 | Mac App Store | `mas "...", id: ...` | `brew bundle install` |
 | Setapp | `# setapp "..."` | Manual — open Setapp app |
+| Browser extensions | `# <browser>-extension "..."` | Manual — browser extension store |
 | Manually installed | `# manual "..."` | Manual — vendor website |
 
-## Usage
+---
+
+## Generating the Brewfile
 
 ```bash
-# Generate ~/Brewfile (default)
+# Write to ~/Brewfile (default)
 ./generate-brewfile.sh
 
-# Or specify a custom output path
-./generate-brewfile.sh ~/Desktop/Brewfile
+# Or specify a custom path
+./generate-brewfile.sh ~/brewfile-generator/Brewfile
 ```
 
-Re-run anytime to refresh. An existing `~/Brewfile` is automatically backed up with a timestamp before each run.
+Re-run any time you install something new. An existing Brewfile is automatically
+backed up with a timestamp (`Brewfile.YYYYMMDD_HHMMSS.bak`) before each run.
 
 ## Requirements
 
-- macOS with [Homebrew](https://brew.sh) installed
-- [`mas`](https://github.com/mas-cli/mas) for Mac App Store entries — `brew install mas`
-- Python 3 (pre-installed on macOS) for cask artifact parsing
-- Must be signed into the **App Store** app for `mas` to work
+- macOS with [Homebrew](https://brew.sh)
+- [`mas`](https://github.com/mas-cli/mas) for App Store entries — `brew install mas`
+- Python 3 (pre-installed on macOS) for cask and extension name resolution
+- Signed into the **App Store** app for `mas` to work
+
+---
 
 ## Restoring on a new Mac
 
+### Step 1 — Install Homebrew
+
 ```bash
-# 1. Install Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# 2. Install mas and sign into the App Store app, then:
-brew install mas
-
-# 3. Run the restore
-brew bundle install --file=~/Brewfile
 ```
 
-After `brew bundle install` completes:
-- Open **Setapp** and reinstall any `# setapp` apps from your subscription
-- Download and reinstall any `# manual` apps from the vendor websites
+On Apple Silicon, follow the post-install prompt to add Homebrew to your PATH.
+
+### Step 2 — Clone this repo
+
+```bash
+git clone https://github.com/rbird/brewfile-generator ~/brewfile-generator
+```
+
+### Step 3 — Install `mas` and sign into the App Store
+
+```bash
+brew install mas
+```
+
+Open the **App Store** app and sign in with your Apple ID before continuing.
+`mas` requires an active session — App Store entries will fail silently without it.
+
+### Step 4 — Run the automated restore
+
+```bash
+brew bundle install --file=~/brewfile-generator/Brewfile
+```
+
+Installs all Homebrew taps, formulae, casks, and Mac App Store apps automatically.
+Expect **20–60 minutes** depending on your internet speed and app count.
+
+> **Tip:** `brew bundle install` is idempotent — if anything fails, fix the issue
+> and re-run. Already-installed entries are skipped automatically.
+> Add `--verbose` for per-package output if something appears stuck.
+
+### Step 5 — Reinstall Setapp apps
+
+Print your Setapp checklist:
+
+```bash
+grep "^# setapp" ~/brewfile-generator/Brewfile | sed 's/# setapp "//;s/"//'
+```
+
+Open the **Setapp** desktop app, search for each app by name, and install.
+All apps are included in your subscription — no individual purchases needed.
+
+### Step 6 — Reinstall browser extensions
+
+Print extensions per browser:
+
+```bash
+grep "^# chrome-extension"  ~/brewfile-generator/Brewfile | sed 's/# chrome-extension "//;s/".*//'
+grep "^# brave-extension"   ~/brewfile-generator/Brewfile | sed 's/# brave-extension "//;s/".*//'
+grep "^# edge-extension"    ~/brewfile-generator/Brewfile | sed 's/# edge-extension "//;s/".*//'
+grep "^# arc-extension"     ~/brewfile-generator/Brewfile | sed 's/# arc-extension "//;s/".*//'
+grep "^# firefox-extension" ~/brewfile-generator/Brewfile | sed 's/# firefox-extension "//;s/"//'
+```
+
+Each Chrome/Brave/Edge/Arc entry includes the extension ID — use it to jump directly
+to the install page:
+
+```
+https://chromewebstore.google.com/detail/<ID>
+```
+
+### Step 7 — Reinstall manually installed apps
+
+Print your manual checklist:
+
+```bash
+grep "^# manual" ~/brewfile-generator/Brewfile | sed 's/# manual "//;s/"//'
+```
+
+For each app:
+1. Check `brew search <name>` first — it may now be available as a cask
+2. If not, download the installer from the vendor's website
+3. Re-enter any license keys (check your email or password manager)
+
+---
+
+## Keeping the Brewfile current
+
+Re-run the script any time your app inventory changes:
+
+```bash
+cd ~/brewfile-generator
+./generate-brewfile.sh ~/brewfile-generator/Brewfile
+git add Brewfile && git commit -m "chore: refresh Brewfile $(date +%Y-%m-%d)" && git push
+```
+
+Or activate the weekly Launch Agent below to keep it updated automatically.
+
+---
 
 ## Automating with a Launch Agent (recommended)
 
-A macOS Launch Agent runs the script on a schedule in the background — no terminal required. The example below regenerates the Brewfile every **Monday at 9 AM** and commits + pushes the result to GitHub automatically.
+A macOS Launch Agent runs the script weekly and auto-commits changes to GitHub.
 
 **1. Create the plist**
 
-Save the following to `~/Library/LaunchAgents/com.user.brewfile-generator.plist`:
+Save to `~/Library/LaunchAgents/com.user.brewfile-generator.plist`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -83,7 +168,6 @@ Save the following to `~/Library/LaunchAgents/com.user.brewfile-generator.plist`
     </string>
   </array>
 
-  <!-- Homebrew requires its bin directory in PATH -->
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
@@ -114,7 +198,7 @@ Save the following to `~/Library/LaunchAgents/com.user.brewfile-generator.plist`
 </plist>
 ```
 
-**2. Load and enable it**
+**2. Load and enable**
 
 ```bash
 launchctl load ~/Library/LaunchAgents/com.user.brewfile-generator.plist
@@ -126,7 +210,7 @@ launchctl load ~/Library/LaunchAgents/com.user.brewfile-generator.plist
 launchctl list | grep brewfile-generator
 ```
 
-**4. Run it immediately (optional test)**
+**4. Test immediately**
 
 ```bash
 launchctl start com.user.brewfile-generator
@@ -139,28 +223,23 @@ tail -f /tmp/brewfile-generator.log
 launchctl unload ~/Library/LaunchAgents/com.user.brewfile-generator.plist
 ```
 
-## Automating with cron (alternative)
+> **Note:** The Launch Agent approach is preferred over cron — it respects sleep/wake
+> cycles and won't be skipped if your Mac is asleep at the scheduled time.
 
-If you prefer cron, note that it does not inherit your shell's `PATH`, so Homebrew tools must be referenced explicitly.
-
-```bash
-crontab -e
-```
-
-Add this line to run every Monday at 9 AM:
-
-```
-0 9 * * 1 PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin HOME=/Users/rbird /Users/rbird/brewfile-generator/generate-brewfile.sh /Users/rbird/brewfile-generator/Brewfile
-```
-
-> **Note:** The Launch Agent approach is preferred on macOS — it respects sleep/wake cycles and integrates with the system properly. Cron jobs may be skipped if the Mac is asleep at the scheduled time.
+---
 
 ## How manual-install detection works
 
 The script scans `/Applications` and excludes:
-1. Apps with a `Contents/_MASReceipt/` bundle → App Store
-2. Apps inside `/Applications/Setapp/` → Setapp
+1. Apps inside `/Applications/Setapp/` → Setapp
+2. Apps with a `Contents/_MASReceipt/` bundle → App Store
 3. Apps with a `com.apple.*` bundle ID → Apple system apps
 4. Apps whose `.app` name appears in `brew info --cask --json=v2` output → Homebrew cask
 
 Everything remaining is flagged as `# manual`.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE)
