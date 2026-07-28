@@ -49,7 +49,7 @@ fi
 # ── Header ────────────────────────────────────────────────────────────────────
 log "Generating Brewfile → $OUTPUT"
 cat > "$OUTPUT" <<EOF
-# Brewfile — generated $(date '+%Y-%m-%d %H:%M:%S %Z')
+# Brewfile — generated $(date '+%Y-%m-%d')
 #
 # Restore all apps on a new Mac:
 #   1. Install Homebrew:  /bin/bash -c "\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

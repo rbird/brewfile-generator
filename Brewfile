@@ -1,4 +1,4 @@
-# Brewfile — generated 2026-07-27 20:55:12 EDT
+# Brewfile — generated 2026-07-27
 #
 # Restore all apps on a new Mac:
 #   1. Install Homebrew:  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
