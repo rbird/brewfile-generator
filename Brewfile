@@ -9,6 +9,9 @@
 # Setapp apps (marked with "# setapp") must be reinstalled manually
 # through the Setapp desktop app after subscribing at https://setapp.com
 #
+# Browser extensions (marked with "# <browser>-extension") must be reinstalled
+# manually from each browser's extension store.
+#
 # Manually installed apps (marked with "# manual") were not installed via
 # any package manager and must be downloaded from the vendor's website.
 
@@ -341,6 +344,41 @@ mas " ZeroDuplicates                ", id: 6738340521
 # setapp "Ortix"
 # setapp "Path Finder"
 # setapp "Telescopo Markdown Studio"
+
+# ── Browser Extensions — reinstall manually from each browser's extension store ───
+# Safari extensions are bundled with App Store apps and already captured above.
+
+# Chrome
+# chrome-extension "Mirror Mode for Google Meet™"  # ID: akmglodbcihkcgojpdmbocmlpkfjhfof
+# chrome-extension "Session Alive"  # ID: aodfoiacnmepndhojccepdcpmehjbham
+# chrome-extension "Honey: Automated Coupons & Rewards"  # ID: bmnlcjabgnpnenekpadlanbbkooimhnj
+# chrome-extension "Rakuten: Get Cash Back For Shopping"  # ID: chhjbpecpncaggjpdakmflnfcopglcmi
+# chrome-extension "TickTick - Todo & Task List"  # ID: diankknpkndanachmlckaikddgcehkod
+# chrome-extension "Adobe Acrobat: PDF edit, convert, sign tools"  # ID: efaidnbmnnnibpcajpcglclefindmkaj
+# chrome-extension "Aura"  # ID: fjbgpaheigpmkbdkdfghmkbnkpeofmhh
+# chrome-extension "Glance Networks"  # ID: fpdehenmbphoijfollkningldmdfilim
+# chrome-extension "Glance Networks"  # ID: gniobnbbehpgbcamkdplghfimhocklgb
+# chrome-extension "Hunter - Email Finder Extension"  # ID: hgmhmanijnjhaffoampdlllchpolkdnj
+# chrome-extension "BookMacster Sync"  # ID: lagihdefccpmghlnagdlhhnpboepofhm
+# chrome-extension "Video Download Helper"  # ID: lmjnegcaeklhafolokijcfjliaokphfk
+# chrome-extension "Bumpr Extension for Chrome"  # ID: njkekafaidebinelgdobnpbijknfnlef
+# chrome-extension "Chrome Web Store Payments"  # ID: nmmhkkegccagdldgiimedpiccmgmieda
+# chrome-extension "Bitwarden Password Manager"  # ID: nngceckbapebfimnlniiiahkandclblb
+# chrome-extension "Monica: All-In-One AI Assist & Smartest  AI Agent"  # ID: ofpnmcalabcbjgholdjcjblkibolbppb
+# chrome-extension "Coherence Helper"  # ID: ogggjopckpoopenbejbmjkcdmlelepbe
+
+# Brave
+
+# Edge
+# edge-extension "The Camelizer"  # ID: bpggaanjmbjoahhknlajnhdhkljekpbg
+# edge-extension "1Password – Password Manager"  # ID: dppgmdbiimibapkepcbdbmkaabgiofem
+# edge-extension "Google Docs Offline"  # ID: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+# edge-extension "Edge relevant text changes"  # ID: jmjflgjpcpepeafmmgdpfkogkghcpiha
+
+# Firefox
+# firefox-extension "BookMacster Sync"
+# firefox-extension "Downie"
+# firefox-extension "Video Download Helper"
 
 # ── Manually Installed — download and reinstall from vendor websites ──────────
 # Apps found in /Applications not tracked by Homebrew, MAS, or Setapp.
