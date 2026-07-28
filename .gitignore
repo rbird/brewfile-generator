@@ -1,0 +1,11 @@
+# Brewfile backups created by generate-brewfile.sh
+Brewfile.*.bak
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.test
