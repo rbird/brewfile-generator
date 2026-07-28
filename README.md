@@ -138,93 +138,50 @@ Or activate the weekly Launch Agent below to keep it updated automatically.
 
 ## Automating with a Launch Agent (recommended)
 
-A macOS Launch Agent runs the script weekly and auto-commits changes to GitHub.
+`setup-launchagent.sh` handles the full lifecycle — writing the plist,
+loading it, and verifying it — in a single command.
 
-**1. Create the plist**
-
-Save to `~/Library/LaunchAgents/com.user.brewfile-generator.plist`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>Label</key>
-  <string>com.user.brewfile-generator</string>
-
-  <key>ProgramArguments</key>
-  <array>
-    <string>/bin/bash</string>
-    <string>-c</string>
-    <string>
-      /Users/rbird/brewfile-generator/generate-brewfile.sh \
-        /Users/rbird/brewfile-generator/Brewfile &amp;&amp; \
-      cd /Users/rbird/brewfile-generator &amp;&amp; \
-      git add Brewfile &amp;&amp; \
-      git diff --cached --quiet || \
-        git commit -m "chore: refresh Brewfile $(date +%Y-%m-%d)" &amp;&amp; \
-        git push
-    </string>
-  </array>
-
-  <key>EnvironmentVariables</key>
-  <dict>
-    <key>PATH</key>
-    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-    <key>HOME</key>
-    <string>/Users/rbird</string>
-  </dict>
-
-  <!-- Run every Monday at 09:00 -->
-  <key>StartCalendarInterval</key>
-  <dict>
-    <key>Weekday</key>
-    <integer>1</integer>
-    <key>Hour</key>
-    <integer>9</integer>
-    <key>Minute</key>
-    <integer>0</integer>
-  </dict>
-
-  <key>StandardOutPath</key>
-  <string>/tmp/brewfile-generator.log</string>
-  <key>StandardErrorPath</key>
-  <string>/tmp/brewfile-generator.log</string>
-
-  <key>RunAtLoad</key>
-  <false/>
-</dict>
-</plist>
-```
-
-**2. Load and enable**
+### Install
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.user.brewfile-generator.plist
+./setup-launchagent.sh
 ```
 
-**3. Verify it loaded**
+This writes the plist to `~/Library/LaunchAgents/`, loads it with `launchctl`,
+and confirms the agent is active. The Brewfile refreshes every **Monday at 09:00**
+and auto-commits + pushes only when the content actually changes.
+
+### Test immediately
 
 ```bash
-launchctl list | grep brewfile-generator
-```
-
-**4. Test immediately**
-
-```bash
-launchctl start com.user.brewfile-generator
+./setup-launchagent.sh --run
 tail -f /tmp/brewfile-generator.log
 ```
 
-**To disable:**
+### Remove
 
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.user.brewfile-generator.plist
+./setup-launchagent.sh --unload
 ```
 
-> **Note:** The Launch Agent approach is preferred over cron — it respects sleep/wake
-> cycles and won't be skipped if your Mac is asleep at the scheduled time.
+Unloads the agent and deletes the plist.
+
+### Change the schedule
+
+Edit the three variables at the top of `setup-launchagent.sh`, then re-run it:
+
+```bash
+WEEKDAY=1   # 0=Sun  1=Mon  2=Tue  3=Wed  4=Thu  5=Fri  6=Sat
+HOUR=9
+MINUTE=0
+```
+
+```bash
+./setup-launchagent.sh   # re-run to apply the new schedule
+```
+
+> **Note:** Launch Agents are preferred over cron on macOS — they respect
+> sleep/wake cycles and won't be skipped if your Mac is asleep at run time.
 
 ---
 
