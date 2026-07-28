@@ -185,6 +185,72 @@ MINUTE=0
 
 ---
 
+## Verifying the automation is working
+
+### Check the agent is loaded
+
+```bash
+launchctl list | grep brewfile-generator
+```
+
+A result with a PID (first column) means it is currently running. A `-` means
+it is loaded and waiting for its next scheduled time. No output means it is
+not loaded — run `./setup-launchagent.sh` to install it.
+
+### Check the last run log
+
+```bash
+cat /tmp/brewfile-generator.log
+```
+
+Look for the summary block at the end:
+
+```
+✔  Brewfile written: …
+   Taps:          5
+   Formulae:      123
+   …
+```
+
+If the log is empty or absent the agent has not run yet (it only fires on
+schedule unless triggered manually with `--run`).
+
+### Check the git history
+
+```bash
+git -C ~/brewfile-generator log --oneline -10
+```
+
+Successful runs that detected changes produce a commit like:
+
+```
+a1b2c3d chore: refresh Brewfile 2026-07-28
+```
+
+No recent `chore: refresh` commits means either the app inventory has not
+changed since the last run (expected), or the agent has not fired yet.
+
+### Check the Brewfile date
+
+```bash
+head -1 ~/brewfile-generator/Brewfile
+```
+
+This prints the generation date. If it matches today (or the last expected
+Monday) the agent ran successfully.
+
+### Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| No log file | Agent hasn't fired yet | Run `./setup-launchagent.sh --run` to test manually |
+| Log shows errors | PATH or permission issue | Check `EnvironmentVariables` in the plist; re-run `./setup-launchagent.sh` |
+| `git push` fails | SSH key not available to agent | Switch remote to HTTPS: `git remote set-url origin https://github.com/rbird/brewfile-generator` |
+| Agent not in `launchctl list` | Plist not loaded | Run `./setup-launchagent.sh` to reinstall |
+| `mas` errors during run | Not signed into App Store | Open the App Store app and sign in |
+
+---
+
 ## How manual-install detection works
 
 The script scans `/Applications` and excludes:
