@@ -332,7 +332,7 @@ mas " 497799835  Xcode                         ", id: 497799835
 mas " 889428659  xScope                        ", id: 889428659
 mas " ZeroDuplicates                ", id: 6738340521
 
-# ── Setapp — reinstall manually via the Setapp desktop app ────────────────────
+# ── Setapp — reinstall manually via the Setapp desktop app ──────────────────
 # These apps require an active Setapp subscription (https://setapp.com).
 # After "brew bundle install", open Setapp and reinstall each one.
 # setapp "AnyTrans for iOS"
@@ -345,7 +345,7 @@ mas " ZeroDuplicates                ", id: 6738340521
 # setapp "Path Finder"
 # setapp "Telescopo Markdown Studio"
 
-# ── Browser Extensions — reinstall manually from each browser's extension store ───
+# ── Browser Extensions — reinstall manually from each browser's extension store ─────
 # Safari extensions are bundled with App Store apps and already captured above.
 
 # Chrome
@@ -380,7 +380,7 @@ mas " ZeroDuplicates                ", id: 6738340521
 # firefox-extension "Downie"
 # firefox-extension "Video Download Helper"
 
-# ── Manually Installed — download and reinstall from vendor websites ──────────
+# ── Manually Installed — download and reinstall from vendor websites ────────
 # Apps found in /Applications not tracked by Homebrew, MAS, or Setapp.
 # Reinstall each one manually on a new Mac.
 # manual "App Cleaner 8"
@@ -392,17 +392,13 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "Dante Updater"
 # manual "DisplayCAL"
 # manual "Dokkio"
-# manual "dupeguru"
 # manual "EaseUS AI Media Player"
 # manual "EaseUS MobiMover"
-# manual "eM Client"
 # manual "Excire Foto"
 # manual "Faxage"
 # manual "File Architect"
 # manual "GoodSyncExplorer"
 # manual "Gumroad"
-# manual "iStatistica Sensors"
-# manual "iZotope Product Portal"
 # manual "Key Ring"
 # manual "Magic Lantern"
 # manual "Microsoft 365 Copilot Shim"
@@ -423,10 +419,9 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "NDI Test Patterns"
 # manual "NDI Video Monitor"
 # manual "NDI Virtual Input"
-# manual "net.downloadhelper.coapp"
+# manual "NIIMBOT"
 # manual "Neutone FX"
 # manual "NightOwl"
-# manual "NIIMBOT"
 # manual "OBSBOT_Center"
 # manual "OneDrive"
 # manual "Parallels Toolbox"
@@ -436,7 +431,6 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "QGIS-master-fabc619"
 # manual "Razuna Desktop"
 # manual "Regex101"
-# manual "renamer.ai"
 # manual "ScreenFlow"
 # manual "SoftRAID"
 # manual "Stocard"
@@ -446,7 +440,6 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "Techtool Pro"
 # manual "Telegram Desktop"
 # manual "Tembo"
-# manual "textsoap9"
 # manual "Topaz Gigapixel AI"
 # manual "Topaz Photo AI"
 # manual "Topaz Photo"
@@ -456,5 +449,12 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "VMware Fusion"
 # manual "Wallet Creator"
 # manual "Youtube App"
+# manual "dupeguru"
+# manual "eM Client"
+# manual "iStatistica Sensors"
+# manual "iZotope Product Portal"
+# manual "net.downloadhelper.coapp"
+# manual "renamer.ai"
+# manual "textsoap9"
 # manual "zoom.us"
 
