@@ -2,6 +2,8 @@
 
 A shell script that snapshots every installed app on macOS and emits a `Brewfile` for one-command restoration on a new Mac.
 
+For a step-by-step guide to restoring apps on a new Mac, see [MIGRATION.md](MIGRATION.md).
+
 ## What it captures
 
 | Source | Brewfile entry | Restore method |
