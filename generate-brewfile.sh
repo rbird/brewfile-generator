@@ -251,14 +251,35 @@ if has brew; then
 
   if [[ ${#_cask_list[@]} -gt 0 ]]; then
     brew info --cask --json=v2 "${_cask_list[@]}" 2>/dev/null | python3 -c "
-import json, sys
+import json, sys, os
 try:
     data = json.load(sys.stdin)
     for cask in data.get('casks', []):
         for artifact in cask.get('artifacts', []):
-            if isinstance(artifact, dict) and 'app' in artifact:
-                for app in artifact['app']:
-                    print(app)
+            if not isinstance(artifact, dict):
+                continue
+            # Direct .app installs
+            if 'app' in artifact:
+                apps = artifact['app']
+                if isinstance(apps, str):
+                    apps = [apps]
+                for app in apps:
+                    if isinstance(app, str) and app.endswith('.app'):
+                        print(os.path.basename(app))
+            # pkg-based installs: app path lives in uninstall -> delete
+            if 'uninstall' in artifact:
+                uninstalls = artifact['uninstall']
+                if isinstance(uninstalls, dict):
+                    uninstalls = [uninstalls]
+                for u in uninstalls:
+                    if not isinstance(u, dict):
+                        continue
+                    deletes = u.get('delete', [])
+                    if isinstance(deletes, str):
+                        deletes = [deletes]
+                    for d in deletes:
+                        if isinstance(d, str) and d.endswith('.app'):
+                            print(os.path.basename(d))
 except Exception:
     pass
 " > "$_cask_tmp" 2>/dev/null || true
