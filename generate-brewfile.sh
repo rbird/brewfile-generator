@@ -115,11 +115,21 @@ if ! has mas; then
   warn "'mas' not found — App Store entries skipped."
   printf '# Skipped: install mas with "brew install mas" then re-run this script.\n' >> "$OUTPUT"
 else
+  # Use awk to robustly parse mas list output:
+  # format is: [<spaces>]<id><spaces><name><spaces>(<version>)
+  # awk skips leading whitespace, extracts $1 as id, then rebuilds
+  # the name by stripping id and version from the full line.
   while IFS= read -r line; do
-    [[ -z "$line" ]] && continue
+    [[ -z "${line// }" ]] && continue
     app_id=$(awk '{print $1}' <<< "$line")
-    # Strip leading id and trailing (version)
-    app_name=$(sed -E 's/^[0-9]+ //; s/ \([^)]+\)$//' <<< "$line")
+    # Strip optional leading whitespace + id + spaces, then trailing (version)
+    app_name=$(awk '{
+      sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
+      sub(/[[:space:]]+\([^)]+\)[[:space:]]*$/, "")
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "")
+      print
+    }' <<< "$line")
+    [[ -z "$app_id" || -z "$app_name" ]] && continue
     printf 'mas "%s", id: %s\n' "$app_name" "$app_id" >> "$OUTPUT"
     (( mas_count++ )) || true
   done < <(mas list 2>/dev/null | sort -f -k2)

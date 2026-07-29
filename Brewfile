@@ -245,93 +245,93 @@ cask "whatsapp"
 cask "zoom"
 
 # ── Mac App Store ─────────────────────────────────────────────────────────────
-mas " Actions                       ", id: 1586435171
-mas " App for Youtube               ", id: 6742397652
-mas " 425264550  Blackmagic Disk Speed Test    ", id: 425264550
-mas " Brother iPrint&Scan           ", id: 1193539993
-mas " Bumpr                         ", id: 1166066070
-mas " CapCut                        ", id: 1500855883
-mas " 696977615  Capo                          ", id: 696977615
-mas " CardLocker                    ", id: 6746393826
-mas " Clean Email                   ", id: 1441250616
-mas " CloudMounter                  ", id: 1130254674
-mas " ColorSlurp                    ", id: 1287239339
-mas " Day One                       ", id: 1055511498
-mas " 590407707  Delineato Pro                 ", id: 590407707
-mas " Documents for Dropbox         ", id: 6480280445
-mas " Dropbox Dash for Safari       ", id: 6446790295
-mas " Duplicate File Finder         ", id: 1032755628
-mas " Ebook Converter               ", id: 1081457679
-mas " 406056744  Evernote                      ", id: 406056744
-mas " FileBrowser Pro               ", id: 1542229474
-mas " 402569179  Find Any File                 ", id: 402569179
-mas " Flighty                       ", id: 1358823008
-mas " Folder Preview                ", id: 6698876601
-mas " 486626129  Folder Tidy                   ", id: 486626129
-mas " Foodnoms                      ", id: 1479461686
-mas " 503039729  Fotor Photo Editor            ", id: 503039729
-mas " 553245401  Friendly Streaming            ", id: 553245401
-mas " 682658836  GarageBand                    ", id: 682658836
-mas " GrandPerspective              ", id: 1111570163
-mas " Hue Menu                      ", id: 1500678169
-mas " 439623248  iA Writer Classic             ", id: 439623248
-mas " 408981434  iMovie                        ", id: 408981434
-mas " 963582854  Integrity Plus                ", id: 963582854
-mas " iStatistica Pro               ", id: 1447778660
-mas " 409183694  Keynote                       ", id: 409183694
-mas " 302584613  Kindle                        ", id: 302584613
-mas " 411897373  Letter Opener                 ", id: 411897373
-mas " 405772121  LittleIpsum                   ", id: 405772121
-mas " Longplay                      ", id: 1599401757
-mas " Loomscript                    ", id: 6770951845
-mas " 430255202  Mactracker                    ", id: 430255202
-mas " Magic Disk Benchmark          ", id: 1608793370
-mas " MergeX                        ", id: 1591349335
-mas " Mindlist                      ", id: 1505964697
-mas " MindNode Classic              ", id: 1289197285
-mas " Multi Rename Tool             ", id: 1245344803
-mas " 361304891  Numbers                       ", id: 361304891
-mas " 409201541  Pages                         ", id: 409201541
-mas " Paletter                      ", id: 1494948845
-mas " 979573567  Panorama Stitcher             ", id: 979573567
-mas " 429449079  Patterns                      ", id: 429449079
-mas " PDF Squeezer                  ", id: 1502111349
-mas " 621276561  PDFOptim                      ", id: 621276561
-mas " 778590574  PhotoMill                     ", id: 778590574
-mas " 536956866  PhotoResize Pro               ", id: 536956866
-mas " 463362050  PhotoSweeper                  ", id: 463362050
-mas " Pixelmator Pro                ", id: 1289583905
-mas " Posterino                     ", id: 1568451594
-mas " Power Prompter Express        ", id: 1114323504
-mas " 545519333  Prime Video                   ", id: 545519333
-mas " reMarkable                    ", id: 1276493162
-mas " Screens 5                     ", id: 1663047912
-mas " Session                       ", id: 1521432881
-mas " SharepointFinder              ", id: 6759178974
-mas " 442168834  SiteSucker                    ", id: 442168834
-mas " SiteWorks 2                   ", id: 6736953359
-mas " 803453959  Slack                         ", id: 803453959
-mas " Softmatic BarcodePlus V5      ", id: 1558258443
-mas " 922493176  SoundDesk                     ", id: 922493176
-mas " Spark                         ", id: 1176895641
-mas " Speedtest                     ", id: 1153157709
-mas " Structured                    ", id: 1499198946
-mas " Studio Zero Product Photo AI  ", id: 6756270620
-mas " SyncTime Lite                 ", id: 1489321324
-mas " Termius                       ", id: 1176074088
-mas " 899247664  TestFlight                    ", id: 899247664
-mas " TextSniper                    ", id: 1528890965
-mas " 904280696  Things                        ", id: 904280696
-mas " 966085870  TickTick                      ", id: 966085870
-mas " 585829637  Todoist                       ", id: 585829637
-mas " Unzip - RAR ZIP 7Z Unarchiver ", id: 1537056818
-mas " Unzip One                     ", id: 1127253508
-mas " Website Downloader            ", id: 6745128463
-mas " WPS Office                    ", id: 1468073139
-mas " 417967324  WriteRoom                     ", id: 417967324
-mas " 497799835  Xcode                         ", id: 497799835
-mas " 889428659  xScope                        ", id: 889428659
-mas " ZeroDuplicates                ", id: 6738340521
+mas "Actions", id: 1586435171
+mas "App for Youtube", id: 6742397652
+mas "Blackmagic Disk Speed Test", id: 425264550
+mas "Brother iPrint&Scan", id: 1193539993
+mas "Bumpr", id: 1166066070
+mas "CapCut", id: 1500855883
+mas "Capo", id: 696977615
+mas "CardLocker", id: 6746393826
+mas "Clean Email", id: 1441250616
+mas "CloudMounter", id: 1130254674
+mas "ColorSlurp", id: 1287239339
+mas "Day One", id: 1055511498
+mas "Delineato Pro", id: 590407707
+mas "Documents for Dropbox", id: 6480280445
+mas "Dropbox Dash for Safari", id: 6446790295
+mas "Duplicate File Finder", id: 1032755628
+mas "Ebook Converter", id: 1081457679
+mas "Evernote", id: 406056744
+mas "FileBrowser Pro", id: 1542229474
+mas "Find Any File", id: 402569179
+mas "Flighty", id: 1358823008
+mas "Folder Preview", id: 6698876601
+mas "Folder Tidy", id: 486626129
+mas "Foodnoms", id: 1479461686
+mas "Fotor Photo Editor", id: 503039729
+mas "Friendly Streaming", id: 553245401
+mas "GarageBand", id: 682658836
+mas "GrandPerspective", id: 1111570163
+mas "Hue Menu", id: 1500678169
+mas "iA Writer Classic", id: 439623248
+mas "iMovie", id: 408981434
+mas "Integrity Plus", id: 963582854
+mas "iStatistica Pro", id: 1447778660
+mas "Keynote", id: 409183694
+mas "Kindle", id: 302584613
+mas "Letter Opener", id: 411897373
+mas "LittleIpsum", id: 405772121
+mas "Longplay", id: 1599401757
+mas "Loomscript", id: 6770951845
+mas "Mactracker", id: 430255202
+mas "Magic Disk Benchmark", id: 1608793370
+mas "MergeX", id: 1591349335
+mas "Mindlist", id: 1505964697
+mas "MindNode Classic", id: 1289197285
+mas "Multi Rename Tool", id: 1245344803
+mas "Numbers", id: 361304891
+mas "Pages", id: 409201541
+mas "Paletter", id: 1494948845
+mas "Panorama Stitcher", id: 979573567
+mas "Patterns", id: 429449079
+mas "PDF Squeezer", id: 1502111349
+mas "PDFOptim", id: 621276561
+mas "PhotoMill", id: 778590574
+mas "PhotoResize Pro", id: 536956866
+mas "PhotoSweeper", id: 463362050
+mas "Pixelmator Pro", id: 1289583905
+mas "Posterino", id: 1568451594
+mas "Power Prompter Express", id: 1114323504
+mas "Prime Video", id: 545519333
+mas "reMarkable", id: 1276493162
+mas "Screens 5", id: 1663047912
+mas "Session", id: 1521432881
+mas "SharepointFinder", id: 6759178974
+mas "SiteSucker", id: 442168834
+mas "SiteWorks 2", id: 6736953359
+mas "Slack", id: 803453959
+mas "Softmatic BarcodePlus V5", id: 1558258443
+mas "SoundDesk", id: 922493176
+mas "Spark", id: 1176895641
+mas "Speedtest", id: 1153157709
+mas "Structured", id: 1499198946
+mas "Studio Zero Product Photo AI", id: 6756270620
+mas "SyncTime Lite", id: 1489321324
+mas "Termius", id: 1176074088
+mas "TestFlight", id: 899247664
+mas "TextSniper", id: 1528890965
+mas "Things", id: 904280696
+mas "TickTick", id: 966085870
+mas "Todoist", id: 585829637
+mas "Unzip - RAR ZIP 7Z Unarchiver", id: 1537056818
+mas "Unzip One", id: 1127253508
+mas "Website Downloader", id: 6745128463
+mas "WPS Office", id: 1468073139
+mas "WriteRoom", id: 417967324
+mas "Xcode", id: 497799835
+mas "xScope", id: 889428659
+mas "ZeroDuplicates", id: 6738340521
 
 # ── Setapp — reinstall manually via the Setapp desktop app ────────────────────
 # These apps require an active Setapp subscription (https://setapp.com).
