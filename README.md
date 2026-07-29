@@ -3,6 +3,31 @@
 A shell script that snapshots every installed app on macOS and emits a `Brewfile`
 for one-command restoration on a new Mac.
 
+## Getting Started
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/rbird/brewfile-generator ~/brewfile-generator
+cd ~/brewfile-generator
+
+# 2. Install mas (required for App Store entries)
+brew install mas
+
+# 3. Run the script
+./generate-brewfile.sh ~/brewfile-generator/Brewfile
+
+# 4. Commit and push the snapshot
+git add Brewfile && git commit -m "chore: initial Brewfile snapshot" && git push
+
+# 5. (Optional) Set up weekly automation
+./setup-launchagent.sh
+```
+
+That's it. The script scans your Mac, writes the Brewfile, and runs 13 validation
+checks automatically. See the sections below for full details on each step.
+
+---
+
 ## What it captures
 
 | Source | Brewfile entry | Restore method |
