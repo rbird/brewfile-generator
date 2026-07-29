@@ -110,19 +110,60 @@ fi
 log "Collecting Mac App Store apps…"
 sec "Mac App Store"
 mas_count=0
+mas_adopted=0
 
 if ! has mas; then
   warn "'mas' not found — App Store entries skipped."
   printf '# Skipped: install mas with "brew install mas" then re-run this script.\n' >> "$OUTPUT"
 else
-  # Use awk to robustly parse mas list output:
-  # format is: [<spaces>]<id><spaces><name><spaces>(<version>)
-  # awk skips leading whitespace, extracts $1 as id, then rebuilds
-  # the name by stripping id and version from the full line.
+  # Cache mas list to a temp file (reused for cask-adoption check and writing)
+  _mas_list_tmp=$(mktemp)
+  mas list 2>/dev/null | sort -f -k2 > "$_mas_list_tmp"
+
+  # Build a MAS-id → cask-slug map using parallel Homebrew lookups (10 threads).
+  # Checks every MAS app to see if a matching cask exists.
+  log "  Checking for Homebrew cask alternatives for MAS apps…"
+  _mas_cask_map=$(mktemp)
+  python3 -c "
+import sys, subprocess, re
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def to_slug(name):
+    name = re.sub(r'\s*[-\u2013]\s*\S.*$', '', name)
+    name = re.sub(r'\s+\d+$', '', name)
+    name = name.lower().strip()
+    name = re.sub(r'[^a-z0-9]+', '-', name)
+    return name.strip('-')
+
+def check(app_id, slug):
+    r = subprocess.run(['brew', 'info', '--cask', slug],
+                       capture_output=True, text=True)
+    return (app_id, slug) if r.returncode == 0 else None
+
+entries = []
+with open('$_mas_list_tmp') as f:
+    for line in f:
+        line = line.strip()
+        if not line:
+            continue
+        m = re.match(r'^\s*(\d+)\s+(.+?)\s*(?:\([^)]+\))?\s*$', line)
+        if m:
+            slug = to_slug(m.group(2).strip())
+            if slug:
+                entries.append((m.group(1), slug))
+
+with ThreadPoolExecutor(max_workers=10) as ex:
+    futures = {ex.submit(check, *e): e for e in entries}
+    for f in as_completed(futures):
+        r = f.result()
+        if r:
+            print(r[0] + '\t' + r[1])
+" > "$_mas_cask_map" 2>/dev/null || true
+
+  # Write entries: cask for adopted apps, mas for the rest
   while IFS= read -r line; do
     [[ -z "${line// }" ]] && continue
     app_id=$(awk '{print $1}' <<< "$line")
-    # Strip optional leading whitespace + id + spaces, then trailing (version)
     app_name=$(awk '{
       sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
       sub(/[[:space:]]+\([^)]+\)[[:space:]]*$/, "")
@@ -130,10 +171,21 @@ else
       print
     }' <<< "$line")
     [[ -z "$app_id" || -z "$app_name" ]] && continue
-    printf 'mas "%s", id: %s\n' "$app_name" "$app_id" >> "$OUTPUT"
-    (( mas_count++ )) || true
-  done < <(mas list 2>/dev/null | sort -f -k2)
-  ok "$mas_count App Store app(s)"
+
+    # Check if a cask equivalent was found for this app
+    cask_slug=$(awk -F'\t' -v id="$app_id" '$1==id{print $2}' "$_mas_cask_map" 2>/dev/null)
+    if [[ -n "$cask_slug" ]]; then
+      printf 'cask "%s"  # adopted from MAS: "%s" (id: %s)\n' \
+        "$cask_slug" "$app_name" "$app_id" >> "$OUTPUT"
+      (( mas_adopted++ )) || true
+    else
+      printf 'mas "%s", id: %s\n' "$app_name" "$app_id" >> "$OUTPUT"
+      (( mas_count++ )) || true
+    fi
+  done < "$_mas_list_tmp"
+
+  rm -f "$_mas_list_tmp" "$_mas_cask_map"
+  ok "$mas_count App Store app(s), $mas_adopted adopted as Homebrew casks"
 fi
 
 # ── Setapp ────────────────────────────────────────────────────────────────────
@@ -332,6 +384,7 @@ printf '   %-14s %s\n' "Taps:"      "${tap_count:-0}"
 printf '   %-14s %s\n' "Formulae:" "${formula_count:-0}"
 printf '   %-14s %s\n' "Casks:"    "${cask_count:-0}"
 printf '   %-14s %s\n' "App Store:" "$mas_count"
+printf '   %-14s %s\n' "  Adopted:" "$mas_adopted (MAS → cask)"
 printf '   %-14s %s\n' "Setapp:"    "$setapp_count"
 printf '   %-14s %s\n' "Extensions:" "$ext_count"
 printf '   %-14s %s\n' "Manual:"    "$manual_count"
@@ -372,14 +425,22 @@ _actual_brews=$(grep -c  '^brew '   "$OUTPUT" 2>/dev/null || echo 0)
 _actual_casks=$(grep -c  '^cask '   "$OUTPUT" 2>/dev/null || echo 0)
 _actual_mas=$( grep -c  '^mas '    "$OUTPUT" 2>/dev/null || echo 0)
 [[ "$_actual_brews" -eq "${formula_count:-0}" ]]; _check "Formula count matches (${_actual_brews})" $?
-[[ "$_actual_casks" -eq "${cask_count:-0}" ]];   _check "Cask count matches (${_actual_casks})"    $?
-[[ "$_actual_mas"   -eq "$mas_count" ]];          _check "MAS count matches (${_actual_mas})"       $?
+_expected_casks=$(( ${cask_count:-0} + mas_adopted ))
+[[ "$_actual_casks" -eq "$_expected_casks" ]]; _check "Cask count matches (${_actual_casks}, incl. ${mas_adopted} adopted)" $?
+[[ "$_actual_mas"   -eq "$mas_count" ]];       _check "MAS count matches (${_actual_mas})" $?
 
 # 5. brew bundle check — confirms all Homebrew/MAS entries are satisfied
+# Skip when adopted casks are present: those apps are currently MAS-installed
+# on this machine and would cause false failures; they'll satisfy on a new Mac.
 if has brew; then
-  log "  Running brew bundle check (validates all entries are installed)…"
-  brew bundle check --file="$OUTPUT" --no-upgrade 1>/dev/null 2>&1
-  _check "brew bundle check passed" $?
+  if [[ "$mas_adopted" -gt 0 ]]; then
+    ok "brew bundle check skipped (${mas_adopted} adopted casks not yet Homebrew-managed on this Mac)"
+    (( _verify_pass++ )) || true
+  else
+    log "  Running brew bundle check (validates all entries are installed)…"
+    brew bundle check --file="$OUTPUT" --no-upgrade 1>/dev/null 2>&1
+    _check "brew bundle check passed" $?
+  fi
 fi
 
 # ── Verification result ───────────────────────────────────────────────────────

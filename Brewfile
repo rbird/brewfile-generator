@@ -250,21 +250,21 @@ mas "App for Youtube", id: 6742397652
 mas "Blackmagic Disk Speed Test", id: 425264550
 mas "Brother iPrint&Scan", id: 1193539993
 mas "Bumpr", id: 1166066070
-mas "CapCut", id: 1500855883
+cask "capcut"  # adopted from MAS: "CapCut" (id: 1500855883)
 mas "Capo", id: 696977615
 mas "CardLocker", id: 6746393826
 mas "Clean Email", id: 1441250616
-mas "CloudMounter", id: 1130254674
+cask "cloudmounter"  # adopted from MAS: "CloudMounter" (id: 1130254674)
 mas "ColorSlurp", id: 1287239339
 mas "Day One", id: 1055511498
 mas "Delineato Pro", id: 590407707
 mas "Documents for Dropbox", id: 6480280445
 mas "Dropbox Dash for Safari", id: 6446790295
-mas "Duplicate File Finder", id: 1032755628
+cask "duplicate-file-finder"  # adopted from MAS: "Duplicate File Finder" (id: 1032755628)
 mas "Ebook Converter", id: 1081457679
-mas "Evernote", id: 406056744
+cask "evernote"  # adopted from MAS: "Evernote" (id: 406056744)
 mas "FileBrowser Pro", id: 1542229474
-mas "Find Any File", id: 402569179
+cask "find-any-file"  # adopted from MAS: "Find Any File" (id: 402569179)
 mas "Flighty", id: 1358823008
 mas "Folder Preview", id: 6698876601
 mas "Folder Tidy", id: 486626129
@@ -272,7 +272,7 @@ mas "Foodnoms", id: 1479461686
 mas "Fotor Photo Editor", id: 503039729
 mas "Friendly Streaming", id: 553245401
 mas "GarageBand", id: 682658836
-mas "GrandPerspective", id: 1111570163
+cask "grandperspective"  # adopted from MAS: "GrandPerspective" (id: 1111570163)
 mas "Hue Menu", id: 1500678169
 mas "iA Writer Classic", id: 439623248
 mas "iMovie", id: 408981434
@@ -280,11 +280,11 @@ mas "Integrity Plus", id: 963582854
 mas "iStatistica Pro", id: 1447778660
 mas "Keynote", id: 409183694
 mas "Kindle", id: 302584613
-mas "Letter Opener", id: 411897373
+cask "letter-opener"  # adopted from MAS: "Letter Opener" (id: 411897373)
 mas "LittleIpsum", id: 405772121
-mas "Longplay", id: 1599401757
+cask "longplay"  # adopted from MAS: "Longplay" (id: 1599401757)
 mas "Loomscript", id: 6770951845
-mas "Mactracker", id: 430255202
+cask "mactracker"  # adopted from MAS: "Mactracker" (id: 430255202)
 mas "Magic Disk Benchmark", id: 1608793370
 mas "MergeX", id: 1591349335
 mas "Mindlist", id: 1505964697
@@ -295,7 +295,7 @@ mas "Pages", id: 409201541
 mas "Paletter", id: 1494948845
 mas "Panorama Stitcher", id: 979573567
 mas "Patterns", id: 429449079
-mas "PDF Squeezer", id: 1502111349
+cask "pdf-squeezer"  # adopted from MAS: "PDF Squeezer" (id: 1502111349)
 mas "PDFOptim", id: 621276561
 mas "PhotoMill", id: 778590574
 mas "PhotoResize Pro", id: 536956866
@@ -306,31 +306,31 @@ mas "Power Prompter Express", id: 1114323504
 mas "Prime Video", id: 545519333
 mas "reMarkable", id: 1276493162
 mas "Screens 5", id: 1663047912
-mas "Session", id: 1521432881
+cask "session"  # adopted from MAS: "Session" (id: 1521432881)
 mas "SharepointFinder", id: 6759178974
 mas "SiteSucker", id: 442168834
 mas "SiteWorks 2", id: 6736953359
-mas "Slack", id: 803453959
+cask "slack"  # adopted from MAS: "Slack" (id: 803453959)
 mas "Softmatic BarcodePlus V5", id: 1558258443
 mas "SoundDesk", id: 922493176
-mas "Spark", id: 1176895641
+cask "spark"  # adopted from MAS: "Spark" (id: 1176895641)
 mas "Speedtest", id: 1153157709
 mas "Structured", id: 1499198946
 mas "Studio Zero Product Photo AI", id: 6756270620
 mas "SyncTime Lite", id: 1489321324
-mas "Termius", id: 1176074088
+cask "termius"  # adopted from MAS: "Termius" (id: 1176074088)
 mas "TestFlight", id: 899247664
-mas "TextSniper", id: 1528890965
+cask "textsniper"  # adopted from MAS: "TextSniper" (id: 1528890965)
 mas "Things", id: 904280696
-mas "TickTick", id: 966085870
-mas "Todoist", id: 585829637
+cask "ticktick"  # adopted from MAS: "TickTick" (id: 966085870)
+cask "todoist"  # adopted from MAS: "Todoist" (id: 585829637)
 mas "Unzip - RAR ZIP 7Z Unarchiver", id: 1537056818
 mas "Unzip One", id: 1127253508
 mas "Website Downloader", id: 6745128463
 mas "WPS Office", id: 1468073139
 mas "WriteRoom", id: 417967324
 mas "Xcode", id: 497799835
-mas "xScope", id: 889428659
+cask "xscope"  # adopted from MAS: "xScope" (id: 889428659)
 mas "ZeroDuplicates", id: 6738340521
 
 # ── Setapp — reinstall manually via the Setapp desktop app ────────────────────
