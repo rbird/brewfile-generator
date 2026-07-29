@@ -23,7 +23,7 @@ git add Brewfile && git commit -m "chore: initial Brewfile snapshot" && git push
 ./setup-launchagent.sh
 ```
 
-That's it. The script scans your Mac, writes the Brewfile, and runs 13 validation
+That's it. The script scans your Mac, writes the Brewfile, and runs 14 validation
 checks automatically. See the sections below for full details on each step.
 
 ---
@@ -38,6 +38,7 @@ checks automatically. See the sections below for full details on each step.
 | Mac App Store | `mas "...", id: ...` | `brew bundle install` |
 | MAS apps w/ cask equivalent | `cask "..."  # adopted from MAS` | `brew bundle install` — no App Store sign-in needed |
 | Setapp | `# setapp "..."` | Manual — open Setapp app |
+| WebCatalog pinned apps | `# webcatalog "..."` | Manual — open WebCatalog app |
 | Browser extensions | `# <browser>-extension "..."` | Manual — browser extension store |
 | Manually installed | `# manual "..."` | Manual — vendor website |
 
@@ -62,7 +63,7 @@ backed up with a timestamp (`Brewfile.YYYYMMDD_HHMMSS.bak`) before each run.
 
 ### Built-in verification
 
-After every generation the script automatically runs 13 checks and prints a
+After every generation the script automatically runs 14 checks and prints a
 pass/fail summary:
 
 ```
@@ -76,12 +77,13 @@ pass/fail summary:
   ✔ Section present: Setapp
   ✔ Section present: Browser Extensions
   ✔ Section present: Manually Installed
+  ✔ Section present: WebCatalog Apps
   ✔ Formula count matches (125)
   ✔ Cask count matches (111, incl. 18 adopted)
   ✔ MAS count matches (69)
   ✔ brew bundle check skipped (18 adopted casks not yet Homebrew-managed on this Mac)
 
-✔  Verification passed — 13 checks, 0 failures
+✔  Verification passed — 14 checks, 0 failures
 ```
 
 > The `brew bundle check` step is automatically skipped when MAS apps have been
@@ -139,10 +141,10 @@ speed and app count.
 > and re-run. Already-installed entries are skipped automatically.
 > Add `--verbose` for per-package output if something appears stuck.
 
-### Steps 5–7 — Manual post-restore checklist
+### Steps 5–8 — Manual post-restore checklist
 
-These three sources require manual reinstallation after `brew bundle install`
-completes. Run each command to print the relevant checklist.
+These sources require manual reinstallation after `brew bundle install` completes.
+Run each command to print the relevant checklist.
 
 **Setapp** — open the Setapp desktop app and reinstall each:
 
@@ -150,13 +152,22 @@ completes. Run each command to print the relevant checklist.
 grep "^# setapp" ~/brewfile-generator/Brewfile | sed 's/# setapp "//;s/"//'
 ```
 
+**WebCatalog** — open the WebCatalog app and search for each to re-pin it:
+
+```bash
+grep "^# webcatalog" ~/brewfile-generator/Brewfile | sed 's/# webcatalog "//;s/"//'
+```
+
+> `webcatalog` itself installs via `brew bundle install`. Only the pinned apps
+> inside it need to be re-pinned manually through the WebCatalog interface.
+
 **Browser extensions** — reinstall from each browser's extension store:
 
 ```bash
-grep "^# chrome-extension"  ~/brewfile-generator/Brewfile | sed 's/# chrome-extension "//;s/".*//' # Chrome
-grep "^# edge-extension"    ~/brewfile-generator/Brewfile | sed 's/# edge-extension "//;s/".*//'   # Edge
-grep "^# arc-extension"     ~/brewfile-generator/Brewfile | sed 's/# arc-extension "//;s/".*//'    # Arc
-grep "^# brave-extension"   ~/brewfile-generator/Brewfile | sed 's/# brave-extension "//;s/".*//' # Brave
+grep "^# chrome-extension"  ~/brewfile-generator/Brewfile | sed 's/# chrome-extension "//;s/".*//'
+grep "^# edge-extension"    ~/brewfile-generator/Brewfile | sed 's/# edge-extension "//;s/".*//'
+grep "^# arc-extension"     ~/brewfile-generator/Brewfile | sed 's/# arc-extension "//;s/".*//'
+grep "^# brave-extension"   ~/brewfile-generator/Brewfile | sed 's/# brave-extension "//;s/".*//'
 grep "^# firefox-extension" ~/brewfile-generator/Brewfile | sed 's/# firefox-extension "//;s/"//'
 ```
 
@@ -296,25 +307,92 @@ head -1 ~/brewfile-generator/Brewfile
 This prints the generation date. If it matches today (or the last expected
 Monday) the agent ran successfully.
 
-### Troubleshooting
+### Troubleshooting the automation
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | No log file | Agent hasn't fired yet | Run `./setup-launchagent.sh --run` to test manually |
-| Log shows errors | PATH or permission issue | Check `EnvironmentVariables` in the plist; re-run `./setup-launchagent.sh` |
-| `git push` fails | SSH key not available to agent | Switch remote to HTTPS: `git remote set-url origin https://github.com/rbird/brewfile-generator` |
+| Log shows errors | PATH or permission issue | Re-run `./setup-launchagent.sh` to rewrite the plist |
+| `git push` fails | SSH key unavailable to agent | `git remote set-url origin https://github.com/rbird/brewfile-generator` |
 | Agent not in `launchctl list` | Plist not loaded | Run `./setup-launchagent.sh` to reinstall |
 | `mas` errors during run | Not signed into App Store | Open the App Store app and sign in |
 
 ---
 
+## Troubleshooting
+
+### Script fails or produces errors
+
+**`✘ Verification failed`** — one or more of the 14 checks did not pass:
+
+```bash
+bash generate-brewfile.sh ~/brewfile-generator/Brewfile 2>&1 | grep -E "✔|✘|FAIL"
+```
+
+The output names the specific failing check. Most failures are transient (network,
+App Store session). Fix the issue and re-run.
+
+**`mas` returns no apps or wrong names** — sign into the App Store app first:
+
+```bash
+open -a "App Store"
+# sign in, then re-run the script
+```
+
+**App appears as `# manual` but should be a cask** — the cask name may differ from
+the app filename. Check manually:
+
+```bash
+brew search "app name"
+```
+
+**WebCatalog apps not showing up** — confirm the directory exists:
+
+```bash
+ls ~/Applications/WebCatalog\ Apps/
+```
+
+If missing, WebCatalog may not be installed or apps haven't been pinned yet.
+
+### Restore fails on a new Mac
+
+**`brew bundle install` fails midway** — it is safe to re-run; already-installed
+entries are skipped automatically. For a verbose view of what failed:
+
+```bash
+brew bundle install --file=~/brewfile-generator/Brewfile --verbose
+```
+
+**MAS apps fail silently** — the App Store session is required:
+
+```bash
+mas account     # should show your Apple ID
+mas signin      # if blank, sign in again
+```
+
+**Adopted cask not found** — a cask that existed when the Brewfile was generated
+may have been renamed. Find the new name:
+
+```bash
+brew search "app name"   # then update the cask entry in the Brewfile
+```
+
+**Autodesk Fusion or other `.pkg`-installed apps** — these are in the `# manual`
+list. Download the installer from [autodesk.com/fusion360](https://www.autodesk.com/products/fusion-360/personal).
+
+---
+
 ## How manual-install detection works
 
-The script scans `/Applications` and excludes:
-1. Apps inside `/Applications/Setapp/` → Setapp
-2. Apps with a `Contents/_MASReceipt/` bundle → App Store
-3. Apps with a `com.apple.*` bundle ID → Apple system apps
-4. Apps whose `.app` name appears in `brew info --cask --json=v2` output → Homebrew cask
+The script scans both `/Applications` and `~/Applications` (depth 1 only) and
+excludes each app if it matches any of the following:
+
+1. Path is inside `/Applications/Setapp/` → Setapp
+2. Path is inside `~/Applications/WebCatalog Apps/` → WebCatalog (own section)
+3. Bundle contains `Contents/_MASReceipt/` → App Store
+4. Bundle ID starts with `com.apple.` → Apple system app
+5. App name appears in `brew info --cask --json=v2` → Homebrew cask
+   (checks both direct `app` artifacts and `uninstall.delete` for pkg-based casks)
 
 Everything remaining is flagged as `# manual`.
 
