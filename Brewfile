@@ -1,4 +1,4 @@
-# Brewfile — generated 2026-07-27
+# Brewfile — generated 2026-07-29
 #
 # Restore all apps on a new Mac:
 #   1. Install Homebrew:  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -111,6 +111,8 @@ brew "nettle"
 brew "node"
 brew "node@22"
 brew "npth"
+brew "openclaw/tap/gogcli"
+brew "openclaw/tap/wacli"
 brew "openhue/cli/openhue-cli"
 brew "openjdk"
 brew "openjpeg"
@@ -175,7 +177,6 @@ cask "discord"
 cask "displaycal"
 cask "downie"
 cask "drawio"
-cask "drivedx"
 cask "dropbox"
 cask "emclient"
 cask "evernote"
@@ -271,7 +272,6 @@ mas " 503039729  Fotor Photo Editor            ", id: 503039729
 mas " 553245401  Friendly Streaming            ", id: 553245401
 mas " 682658836  GarageBand                    ", id: 682658836
 mas " GrandPerspective              ", id: 1111570163
-mas " 506189836  Harvest                       ", id: 506189836
 mas " Hue Menu                      ", id: 1500678169
 mas " 439623248  iA Writer Classic             ", id: 439623248
 mas " 408981434  iMovie                        ", id: 408981434
@@ -332,7 +332,7 @@ mas " 497799835  Xcode                         ", id: 497799835
 mas " 889428659  xScope                        ", id: 889428659
 mas " ZeroDuplicates                ", id: 6738340521
 
-# ── Setapp — reinstall manually via the Setapp desktop app ──────────────────
+# ── Setapp — reinstall manually via the Setapp desktop app ────────────────────
 # These apps require an active Setapp subscription (https://setapp.com).
 # After "brew bundle install", open Setapp and reinstall each one.
 # setapp "AnyTrans for iOS"
@@ -345,7 +345,7 @@ mas " ZeroDuplicates                ", id: 6738340521
 # setapp "Path Finder"
 # setapp "Telescopo Markdown Studio"
 
-# ── Browser Extensions — reinstall manually from each browser's extension store ─────
+# ── Browser Extensions — reinstall manually from each browser's extension store ───
 # Safari extensions are bundled with App Store apps and already captured above.
 
 # Chrome
@@ -380,7 +380,7 @@ mas " ZeroDuplicates                ", id: 6738340521
 # firefox-extension "Downie"
 # firefox-extension "Video Download Helper"
 
-# ── Manually Installed — download and reinstall from vendor websites ────────
+# ── Manually Installed — download and reinstall from vendor websites ──────────
 # Apps found in /Applications not tracked by Homebrew, MAS, or Setapp.
 # Reinstall each one manually on a new Mac.
 # manual "App Cleaner 8"
@@ -392,13 +392,17 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "Dante Updater"
 # manual "DisplayCAL"
 # manual "Dokkio"
+# manual "dupeguru"
 # manual "EaseUS AI Media Player"
 # manual "EaseUS MobiMover"
+# manual "eM Client"
 # manual "Excire Foto"
 # manual "Faxage"
 # manual "File Architect"
 # manual "GoodSyncExplorer"
 # manual "Gumroad"
+# manual "iStatistica Sensors"
+# manual "iZotope Product Portal"
 # manual "Key Ring"
 # manual "Magic Lantern"
 # manual "Microsoft 365 Copilot Shim"
@@ -419,9 +423,10 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "NDI Test Patterns"
 # manual "NDI Video Monitor"
 # manual "NDI Virtual Input"
-# manual "NIIMBOT"
+# manual "net.downloadhelper.coapp"
 # manual "Neutone FX"
 # manual "NightOwl"
+# manual "NIIMBOT"
 # manual "OBSBOT_Center"
 # manual "OneDrive"
 # manual "Parallels Toolbox"
@@ -431,6 +436,7 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "QGIS-master-fabc619"
 # manual "Razuna Desktop"
 # manual "Regex101"
+# manual "renamer.ai"
 # manual "ScreenFlow"
 # manual "SoftRAID"
 # manual "Stocard"
@@ -440,6 +446,7 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "Techtool Pro"
 # manual "Telegram Desktop"
 # manual "Tembo"
+# manual "textsoap9"
 # manual "Topaz Gigapixel AI"
 # manual "Topaz Photo AI"
 # manual "Topaz Photo"
@@ -449,12 +456,5 @@ mas " ZeroDuplicates                ", id: 6738340521
 # manual "VMware Fusion"
 # manual "Wallet Creator"
 # manual "Youtube App"
-# manual "dupeguru"
-# manual "eM Client"
-# manual "iStatistica Sensors"
-# manual "iZotope Product Portal"
-# manual "net.downloadhelper.coapp"
-# manual "renamer.ai"
-# manual "textsoap9"
 # manual "zoom.us"
 
