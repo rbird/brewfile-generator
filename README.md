@@ -36,9 +36,14 @@ checks automatically. See the sections below for full details on each step.
 | Homebrew formulae | `brew "..."` | `brew bundle install` |
 | Homebrew casks | `cask "..."` | `brew bundle install` |
 | Mac App Store | `mas "...", id: ...` | `brew bundle install` |
+| MAS apps w/ cask equivalent | `cask "..."  # adopted from MAS` | `brew bundle install` — no App Store sign-in needed |
 | Setapp | `# setapp "..."` | Manual — open Setapp app |
 | Browser extensions | `# <browser>-extension "..."` | Manual — browser extension store |
 | Manually installed | `# manual "..."` | Manual — vendor website |
+
+During generation the script automatically checks every App Store app against
+Homebrew. Any that have a matching cask are written as `cask` entries so they
+install via Homebrew on restore — no App Store sign-in required for those apps.
 
 ---
 
@@ -72,12 +77,16 @@ pass/fail summary:
   ✔ Section present: Browser Extensions
   ✔ Section present: Manually Installed
   ✔ Formula count matches (125)
-  ✔ Cask count matches (93)
-  ✔ MAS count matches (87)
-  ✔ brew bundle check passed
+  ✔ Cask count matches (111, incl. 18 adopted)
+  ✔ MAS count matches (69)
+  ✔ brew bundle check skipped (18 adopted casks not yet Homebrew-managed on this Mac)
 
 ✔  Verification passed — 13 checks, 0 failures
 ```
+
+> The `brew bundle check` step is automatically skipped when MAS apps have been
+> adopted as casks. Those apps are currently installed via the App Store on this
+> machine and would cause false failures — they will satisfy on a new Mac.
 
 If any check fails the script prints `✘ Verification failed` with specific
 warnings. Review those before committing the Brewfile.
@@ -122,55 +131,51 @@ Open the **App Store** app and sign in with your Apple ID before continuing.
 brew bundle install --file=~/brewfile-generator/Brewfile
 ```
 
-Installs all Homebrew taps, formulae, casks, and Mac App Store apps automatically.
-Expect **20–60 minutes** depending on your internet speed and app count.
+Installs all Homebrew taps, formulae, casks, App Store apps, and any MAS apps
+that were adopted as casks. Expect **20–60 minutes** depending on your internet
+speed and app count.
 
 > **Tip:** `brew bundle install` is idempotent — if anything fails, fix the issue
 > and re-run. Already-installed entries are skipped automatically.
 > Add `--verbose` for per-package output if something appears stuck.
 
-### Step 5 — Reinstall Setapp apps
+### Steps 5–7 — Manual post-restore checklist
 
-Print your Setapp checklist:
+These three sources require manual reinstallation after `brew bundle install`
+completes. Run each command to print the relevant checklist.
+
+**Setapp** — open the Setapp desktop app and reinstall each:
 
 ```bash
 grep "^# setapp" ~/brewfile-generator/Brewfile | sed 's/# setapp "//;s/"//'
 ```
 
-Open the **Setapp** desktop app, search for each app by name, and install.
-All apps are included in your subscription — no individual purchases needed.
-
-### Step 6 — Reinstall browser extensions
-
-Print extensions per browser:
+**Browser extensions** — reinstall from each browser's extension store:
 
 ```bash
-grep "^# chrome-extension"  ~/brewfile-generator/Brewfile | sed 's/# chrome-extension "//;s/".*//'
-grep "^# brave-extension"   ~/brewfile-generator/Brewfile | sed 's/# brave-extension "//;s/".*//'
-grep "^# edge-extension"    ~/brewfile-generator/Brewfile | sed 's/# edge-extension "//;s/".*//'
-grep "^# arc-extension"     ~/brewfile-generator/Brewfile | sed 's/# arc-extension "//;s/".*//'
+grep "^# chrome-extension"  ~/brewfile-generator/Brewfile | sed 's/# chrome-extension "//;s/".*//' # Chrome
+grep "^# edge-extension"    ~/brewfile-generator/Brewfile | sed 's/# edge-extension "//;s/".*//'   # Edge
+grep "^# arc-extension"     ~/brewfile-generator/Brewfile | sed 's/# arc-extension "//;s/".*//'    # Arc
+grep "^# brave-extension"   ~/brewfile-generator/Brewfile | sed 's/# brave-extension "//;s/".*//' # Brave
 grep "^# firefox-extension" ~/brewfile-generator/Brewfile | sed 's/# firefox-extension "//;s/"//'
 ```
 
-Each Chrome/Brave/Edge/Arc entry includes the extension ID — use it to jump directly
-to the install page:
+Chrome/Edge/Arc/Brave entries include the extension ID. Install directly:
 
 ```
 https://chromewebstore.google.com/detail/<ID>
 ```
 
-### Step 7 — Reinstall manually installed apps
-
-Print your manual checklist:
+**Manually installed apps** — download from vendor websites:
 
 ```bash
 grep "^# manual" ~/brewfile-generator/Brewfile | sed 's/# manual "//;s/"//'
 ```
 
 For each app:
-1. Check `brew search <name>` first — it may now be available as a cask
-2. If not, download the installer from the vendor's website
-3. Re-enter any license keys (check your email or password manager)
+1. Run `brew search <name>` first — it may now be available as a cask
+2. If not, download from the vendor's website
+3. Re-enter license keys from your email or password manager
 
 ---
 
