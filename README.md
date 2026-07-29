@@ -204,6 +204,82 @@ Or activate the weekly Launch Agent below to keep it updated automatically.
 
 ---
 
+## Adopting manually installed apps as Homebrew casks
+
+Some apps in the `# manual` list may have become available as Homebrew casks
+since you first installed them. Adopting them means they restore automatically
+via `brew bundle install` and update with `brew upgrade` — no manual downloads.
+
+### Find adoptable apps
+
+Run this to check all `# manual` entries against Homebrew (takes ~15 seconds):
+
+```bash
+grep "^# manual" ~/brewfile-generator/Brewfile | sed 's/# manual "//;s/"//' | \
+python3 -c "
+import sys, subprocess, re
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def slug(n):
+    n = re.sub(r'\s*[-–]\s*\S.*$', '', n)
+    n = re.sub(r'\s+\d+$', '', n)
+    n = re.sub(r'[^a-z0-9]+', '-', n.lower().strip())
+    return n.strip('-')
+
+def check(name):
+    s = slug(name)
+    r = subprocess.run(['brew','info','--cask',s], capture_output=True)
+    return (name, s) if r.returncode == 0 else None
+
+names = [l.strip() for l in sys.stdin if l.strip()]
+with ThreadPoolExecutor(max_workers=10) as ex:
+    for r in sorted(filter(None, ex.map(check, names))):
+        print(f'  brew install --cask {r[1]:<32}  # {r[0]}')
+"
+```
+
+### Current adoptable apps (as of 2026-07-29)
+
+16 of 64 manually installed apps are available as Homebrew casks:
+
+```bash
+brew install --cask app-cleaner              # App Cleaner 8
+brew install --cask autodesk-fusion          # Autodesk Fusion
+brew install --cask clay                     # Clay
+brew install --cask cocktail                 # Cocktail
+brew install --cask dante-controller         # Dante Controller
+brew install --cask displaycal               # DisplayCAL
+brew install --cask dupeguru                 # dupeguru
+brew install --cask excire-foto              # Excire Foto
+brew install --cask izotope-product-portal   # iZotope Product Portal
+brew install --cask qgis                     # QGIS
+brew install --cask screenflow               # ScreenFlow
+brew install --cask telegram-desktop         # Telegram Desktop
+brew install --cask topaz-gigapixel-ai       # Topaz Gigapixel AI
+brew install --cask topaz-photo              # Topaz Photo
+brew install --cask topaz-photo-ai           # Topaz Photo AI
+brew install --cask topaz-video-ai           # Topaz Video AI
+```
+
+### Adoption procedure
+
+```bash
+# 1. Uninstall the existing app (drag to Trash, or use App Cleaner)
+
+# 2. Install via Homebrew
+brew install --cask autodesk-fusion
+
+# 3. After adopting all desired apps, refresh the Brewfile
+cd ~/brewfile-generator
+./generate-brewfile.sh ~/brewfile-generator/Brewfile
+git add Brewfile && git commit -m "chore: adopt manual apps as casks" && git push
+```
+
+After refresh, adopted apps will move from `# manual` to `cask "..."` entries
+automatically — no Brewfile editing required.
+
+---
+
 ## Automating with a Launch Agent (recommended)
 
 `setup-launchagent.sh` handles the full lifecycle — writing the plist,
