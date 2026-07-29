@@ -328,3 +328,57 @@ printf '   %-14s %s\n' "Manual:"    "$manual_count"
 echo ""
 printf 'To restore on a new Mac:\n'
 printf '  brew bundle install --file="%s"\n' "$OUTPUT"
+
+# ── Verification ──────────────────────────────────────────────────────────────
+echo ""
+log "Verifying Brewfile…"
+_verify_pass=0 _verify_fail=0
+
+_check() {   # _check "description" <exit-code>
+  if [[ "$2" -eq 0 ]]; then
+    ok "$1"
+    (( _verify_pass++ )) || true
+  else
+    warn "FAIL: $1"
+    (( _verify_fail++ )) || true
+  fi
+}
+
+# 1. File exists and is non-empty
+[[ -s "$OUTPUT" ]]; _check "File exists and is non-empty" $?
+
+# 2. Header contains today's date
+grep -q "^# Brewfile — generated $(date '+%Y-%m-%d')" "$OUTPUT" 2>/dev/null
+_check "Header contains today's date" $?
+
+# 3. All section headers present
+for _sec in "Taps" "Formulae" "Casks" "Mac App Store" "Setapp" "Browser Extensions" "Manually Installed"; do
+  grep -q "^# ── ${_sec}" "$OUTPUT" 2>/dev/null
+  _check "Section present: ${_sec}" $?
+done
+
+# 4. Entry counts match what was written
+_actual_brews=$(grep -c  '^brew '   "$OUTPUT" 2>/dev/null || echo 0)
+_actual_casks=$(grep -c  '^cask '   "$OUTPUT" 2>/dev/null || echo 0)
+_actual_mas=$( grep -c  '^mas '    "$OUTPUT" 2>/dev/null || echo 0)
+[[ "$_actual_brews" -eq "${formula_count:-0}" ]]; _check "Formula count matches (${_actual_brews})" $?
+[[ "$_actual_casks" -eq "${cask_count:-0}" ]];   _check "Cask count matches (${_actual_casks})"    $?
+[[ "$_actual_mas"   -eq "$mas_count" ]];          _check "MAS count matches (${_actual_mas})"       $?
+
+# 5. brew bundle check — confirms all Homebrew/MAS entries are satisfied
+if has brew; then
+  log "  Running brew bundle check (validates all entries are installed)…"
+  brew bundle check --file="$OUTPUT" --no-upgrade 1>/dev/null 2>&1
+  _check "brew bundle check passed" $?
+fi
+
+# ── Verification result ───────────────────────────────────────────────────────
+echo ""
+if [[ "$_verify_fail" -eq 0 ]]; then
+  printf '%s✔  Verification passed%s — %d checks, 0 failures\n' \
+    "${GREEN}${BOLD}" "$RESET" "$_verify_pass"
+else
+  printf '%s✘  Verification failed%s — %d passed, %d failed\n' \
+    "${RED}${BOLD}" "$RESET" "$_verify_pass" "$_verify_fail"
+  err "Review warnings above before using this Brewfile."
+fi
