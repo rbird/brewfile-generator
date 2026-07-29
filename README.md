@@ -30,6 +30,33 @@ for one-command restoration on a new Mac.
 Re-run any time you install something new. An existing Brewfile is automatically
 backed up with a timestamp (`Brewfile.YYYYMMDD_HHMMSS.bak`) before each run.
 
+### Built-in verification
+
+After every generation the script automatically runs 13 checks and prints a
+pass/fail summary:
+
+```
+==> Verifying Brewfile…
+  ✔ File exists and is non-empty
+  ✔ Header contains today's date
+  ✔ Section present: Taps
+  ✔ Section present: Formulae
+  ✔ Section present: Casks
+  ✔ Section present: Mac App Store
+  ✔ Section present: Setapp
+  ✔ Section present: Browser Extensions
+  ✔ Section present: Manually Installed
+  ✔ Formula count matches (125)
+  ✔ Cask count matches (93)
+  ✔ MAS count matches (87)
+  ✔ brew bundle check passed
+
+✔  Verification passed — 13 checks, 0 failures
+```
+
+If any check fails the script prints `✘ Verification failed` with specific
+warnings. Review those before committing the Brewfile.
+
 ## Requirements
 
 - macOS with [Homebrew](https://brew.sh)
