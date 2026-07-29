@@ -13,6 +13,8 @@
 #   • Setapp apps            (commented — reinstall via Setapp UI after migration)
 #   • Browser extensions     (commented — Chrome, Brave, Edge, Arc, Firefox)
 #   • Manually installed apps (commented — download from vendor websites)
+#   • WebCatalog pinned apps  (commented — reinstall via WebCatalog app)
+#   • ~/Applications apps     (Autodesk, etc. — compared against all known sources)
 #
 # Restore on a new Mac:
 #   1. Install Homebrew  → https://brew.sh
@@ -23,6 +25,7 @@ set -uo pipefail
 
 OUTPUT="${1:-$HOME/Brewfile}"
 SETAPP_DIR="/Applications/Setapp"
+WEBCATALOG_DIR="$HOME/Applications/WebCatalog Apps"
 
 # ── Colour helpers ─────────────────────────────────────────────────────────────
 _tput() { tput "$@" 2>/dev/null || printf ''; }
@@ -67,6 +70,9 @@ cat > "$OUTPUT" <<EOF
 #
 # Manually installed apps (marked with "# manual") were not installed via
 # any package manager and must be downloaded from the vendor's website.
+#
+# WebCatalog apps (marked with "# webcatalog") are pinned web apps managed
+# by WebCatalog (https://webcatalog.io). Reinstall via the WebCatalog desktop app.
 EOF
 
 # ── Homebrew ──────────────────────────────────────────────────────────────────
@@ -349,7 +355,7 @@ except Exception:
 fi
 
 sec "Manually Installed — download and reinstall from vendor websites"
-printf '# Apps found in /Applications not tracked by Homebrew, MAS, or Setapp.\n' >> "$OUTPUT"
+printf '# Apps in /Applications or ~/Applications not tracked by any known source.\n' >> "$OUTPUT"
 printf '# Reinstall each one manually on a new Mac.\n' >> "$OUTPUT"
 manual_count=0
 
@@ -357,8 +363,11 @@ while IFS= read -r -d '' _app_path; do
   _app_name=$(basename "$_app_path")
   _app_stem="${_app_name%.app}"
 
-  # Skip apps that live inside the Setapp folder
+  # Skip apps inside Setapp folder
   [[ -d "$SETAPP_DIR/$_app_name" ]] && continue
+
+  # Skip apps inside WebCatalog folder (handled in its own section)
+  [[ "$_app_path" == "$WEBCATALOG_DIR"* ]] && continue
 
   # Skip App Store apps — they contain a MAS receipt bundle
   [[ -d "$_app_path/Contents/_MASReceipt" ]] && continue
@@ -372,8 +381,31 @@ while IFS= read -r -d '' _app_path; do
 
   printf '# manual "%s"\n' "$_app_stem" >> "$OUTPUT"
   (( manual_count++ )) || true
-done < <(find /Applications -maxdepth 1 -name "*.app" -print0 | sort -z)
-ok "$manual_count manually installed app(s)"
+done < <(
+  # Scan both /Applications (system-wide) and ~/Applications (user-level).
+  # -maxdepth 1 naturally excludes browser App dirs (not *.app) and WebCatalog
+  # sub-apps (depth 2 inside 'WebCatalog Apps/').
+  find /Applications "$HOME/Applications" \
+    -maxdepth 1 -name "*.app" -print0 2>/dev/null | sort -z
+)
+ok "$manual_count manually installed app(s) (across /Applications and ~/Applications)"
+
+# ── WebCatalog Apps ────────────────────────────────────────────────────────────
+log "Collecting WebCatalog apps…"
+sec "WebCatalog Apps — reinstall via the WebCatalog desktop app"
+printf '# WebCatalog (cask "webcatalog") must be installed first.\n' >> "$OUTPUT"
+printf '# Open WebCatalog and search for each app to pin it again.\n' >> "$OUTPUT"
+webcatalog_count=0
+
+if [[ -d "$WEBCATALOG_DIR" ]]; then
+  while IFS= read -r -d '' _wc_app; do
+    printf '# webcatalog "%s"\n' "$(basename "$_wc_app" .app)" >> "$OUTPUT"
+    (( webcatalog_count++ )) || true
+  done < <(find "$WEBCATALOG_DIR" -maxdepth 1 -name "*.app" -print0 | sort -z)
+  ok "$webcatalog_count WebCatalog app(s)"
+else
+  ok "WebCatalog not installed — skipping"
+fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 printf '\n' >> "$OUTPUT"
@@ -387,6 +419,7 @@ printf '   %-14s %s\n' "App Store:" "$mas_count"
 printf '   %-14s %s\n' "  Adopted:" "$mas_adopted (MAS → cask)"
 printf '   %-14s %s\n' "Setapp:"    "$setapp_count"
 printf '   %-14s %s\n' "Extensions:" "$ext_count"
+printf '   %-14s %s\n' "WebCatalog:" "$webcatalog_count"
 printf '   %-14s %s\n' "Manual:"    "$manual_count"
 echo ""
 printf 'To restore on a new Mac:\n'
@@ -415,7 +448,7 @@ grep -q "^# Brewfile — generated $(date '+%Y-%m-%d')" "$OUTPUT" 2>/dev/null
 _check "Header contains today's date" $?
 
 # 3. All section headers present
-for _sec in "Taps" "Formulae" "Casks" "Mac App Store" "Setapp" "Browser Extensions" "Manually Installed"; do
+for _sec in "Taps" "Formulae" "Casks" "Mac App Store" "Setapp" "Browser Extensions" "Manually Installed" "WebCatalog Apps"; do
   grep -q "^# ── ${_sec}" "$OUTPUT" 2>/dev/null
   _check "Section present: ${_sec}" $?
 done

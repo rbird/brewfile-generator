@@ -14,6 +14,9 @@
 #
 # Manually installed apps (marked with "# manual") were not installed via
 # any package manager and must be downloaded from the vendor's website.
+#
+# WebCatalog apps (marked with "# webcatalog") are pinned web apps managed
+# by WebCatalog (https://webcatalog.io). Reinstall via the WebCatalog desktop app.
 
 # ── Taps ──────────────────────────────────────────────────────────────────────
 tap "antoniorodr/memo"
@@ -382,7 +385,7 @@ mas "ZeroDuplicates", id: 6738340521
 # firefox-extension "Video Download Helper"
 
 # ── Manually Installed — download and reinstall from vendor websites ──────────
-# Apps found in /Applications not tracked by Homebrew, MAS, or Setapp.
+# Apps in /Applications or ~/Applications not tracked by any known source.
 # Reinstall each one manually on a new Mac.
 # manual "App Cleaner 8"
 # manual "Aura"
@@ -445,4 +448,20 @@ mas "ZeroDuplicates", id: 6738340521
 # manual "VMware Fusion"
 # manual "Wallet Creator"
 # manual "Youtube App"
+# manual "Autodesk Fusion Service Utility"
+# manual "Autodesk Fusion"
+# manual "Remove Autodesk Fusion"
+
+# ── WebCatalog Apps — reinstall via the WebCatalog desktop app ────────────────
+# WebCatalog (cask "webcatalog") must be installed first.
+# Open WebCatalog and search for each app to pin it again.
+# webcatalog "Basecamp"
+# webcatalog "CMC File Transfer"
+# webcatalog "Gmail"
+# webcatalog "LinkedIn"
+# webcatalog "Microsoft Sharepoint"
+# webcatalog "Pitch"
+# webcatalog "Snap2List"
+# webcatalog "Synology QuickConnect"
+# webcatalog "Zapier Canvas"
 
